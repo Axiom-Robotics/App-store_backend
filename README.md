@@ -25,3 +25,38 @@ Cloud-based backend API for the Axiom OS App Store. Deployed on Railway, this se
 
 ## 🏗️ Architecture
 
+Robot/Desktop → Local Server → Railway API → JSON Storage
+(localhost) (Cloud) (apps.json)
+
+
+## 📂 Files
+
+- **api_server.py** - Main Flask application
+- **apps.json** - App store catalog
+- **users.json** - User database
+- **requirements.txt** - Python dependencies
+- **Procfile** - Railway deployment config
+
+## 🛠️ Local Development
+
+Install dependencies
+
+pip install -r requirements.txt
+Run server
+
+python api_server.py
+Server starts at http://localhost:5000
+
+
+## 🚢 Deployment
+
+Automatically deployed to Railway from `main` branch.
+
+## 🔗 Related Repositories
+
+- [robot-apps](https://github.com/Axiom-Robotics/robot-apps) - Robot application code
+
+## 📄 License
+
+MIT License
+

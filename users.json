@@ -1,0 +1,435 @@
+{
+  "users": {
+    "demo@example.com": {
+      "password": "1234",
+      "installed_apps": [
+        "Shape Drawer"
+      ],
+      "robot_config": {
+        "type": "TurtleBot3",
+        "model": "burger",
+        "ip": "192.168.0.5"
+      }
+    }
+  },
+  "akshaiy@gmail.com": {
+    "apps": [
+      "SLAM Mapper",
+      "Shape Drawer"
+    ],
+    "robot": {
+      "model": "burger",
+      "ip": "192.168.1.38",
+      "extra": ""
+    }
+  },
+  "akshaiy12@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robot": {
+      "model": "burger",
+      "ip": "192.168.1.45",
+      "extra": ""
+    }
+  },
+  "akshaiythinakaran@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "ip": "192.168.1.100",
+        "model": "burger",
+        "name": "werw",
+        "type": "TurtleBot3"
+      },
+      {
+        "ip": "192.168.1.9",
+        "model": "UR5",
+        "name": "ansh",
+        "type": "Manipulator"
+      }
+    ]
+  },
+  "akshaiythinakaran12@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robot": {
+      "extra": "",
+      "ip": "192.168.1.23",
+      "model": "burger",
+      "TurtleBot3": {
+        "model": "burger",
+        "ip": "1921.168.1.23",
+        "extra": ""
+      }
+    }
+  },
+  "akshaiythinaka@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "abc",
+        "ip": "1234"
+      }
+    ]
+  },
+  "aks123@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "ip": "12345",
+        "model": "abcd",
+        "type": "TurtleBot3"
+      },
+      {
+        "ip": "12345",
+        "model": "abcd",
+        "type": "Manipulator"
+      }
+    ]
+  },
+  "123@gmail.com": {
+    "apps": [
+      "Shape Drawer",
+      "SLAM Mapper",
+      "Dance Bot"
+    ],
+    "robots": [
+      {
+        "ip": "12312",
+        "model": "lmfaoo",
+        "type": "TurtleBot3"
+      },
+      {
+        "ip": "192.1.168.19",
+        "model": "wafff",
+        "type": "Manipulator"
+      }
+    ]
+  },
+  "akshaiythin@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "Waffle",
+        "ip": "192.1.168"
+      },
+      {
+        "type": "Manipulator",
+        "model": "UR5",
+        "ip": "192.1.168"
+      }
+    ]
+  },
+  "akshu@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "Manipulator",
+        "model": "UR5",
+        "ip": "192.1.168"
+      },
+      {
+        "type": "Manipulator",
+        "model": "turtlebot",
+        "ip": "192.1.168"
+      }
+    ]
+  },
+  "aks@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "ip": "192.1.168",
+        "model": "waffle",
+        "type": "TurtleBot3"
+      },
+      {
+        "ip": "192.1.6.1",
+        "model": "UR5",
+        "type": "Manipulator"
+      },
+      {
+        "ip": "123123",
+        "model": "yop",
+        "type": "Humanoid"
+      },
+      {
+        "type": "TurtleBot3",
+        "name": "vew",
+        "model": "burger",
+        "ip": "192.168.1.9"
+      }
+    ]
+  },
+  "wef@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "type": "Manipulator",
+        "model": "waffle",
+        "ip": "1231213123"
+      }
+    ]
+  },
+  "we@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "waff",
+        "ip": "192.168.1.12"
+      }
+    ]
+  },
+  "aksahiy@gmai.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "waffle",
+        "ip": "192.168.1.12"
+      },
+      {
+        "type": "Manipulator",
+        "model": "UR5",
+        "ip": "192.168.1.23"
+      }
+    ]
+  },
+  "akshaiythina@gmail.com": {
+    "apps": [
+      "Shape Drawer",
+      "SLAM Mapper"
+    ],
+    "robots": [
+      {
+        "ip": "192.168.1.24",
+        "model": "PX4",
+        "type": "Drone"
+      },
+      {
+        "ip": "192.168.1.92",
+        "model": "mempho",
+        "type": "Humanoid"
+      },
+      {
+        "ip": "192.1.34.123",
+        "model": "burger",
+        "type": "TurtleBot3"
+      },
+      {
+        "ip": "192.34.24.5",
+        "model": "Atlas",
+        "type": "Humanoid"
+      },
+      {
+        "type": "TurtleBot3",
+        "model": "burger",
+        "ip": "12312313"
+      }
+    ]
+  },
+  "akshiay@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "qweqwe",
+        "ip": "123123"
+      },
+      {
+        "type": "Manipulator",
+        "model": "asda",
+        "ip": "12312"
+      }
+    ]
+  },
+  "null": {
+    "apps": [],
+    "robots": [
+      {
+        "type": "Manipulator",
+        "name": "qwee",
+        "model": "UR5",
+        "ip": "1233213",
+        "location": "",
+        "description": ""
+      }
+    ]
+  },
+  "akshaiyyythina@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "model": "burger",
+        "ip": "192.168.1.34"
+      },
+      {
+        "type": "Manipulator",
+        "model": "UR5",
+        "ip": "192.168.1.34"
+      }
+    ]
+  },
+  "aksa@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "name": "qqqw",
+        "model": "burger",
+        "ip": "192.168.1.19"
+      },
+      {
+        "type": "Manipulator",
+        "name": "Lomidy",
+        "model": "UR5",
+        "ip": "192.168.1.34"
+      }
+    ]
+  },
+  "aksai@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "name": "new",
+        "model": "burger",
+        "ip": "192.168.1.19"
+      },
+      {
+        "type": "Drone",
+        "name": "drone",
+        "model": "PX4",
+        "ip": "192.168.1.19"
+      }
+    ]
+  },
+  "akshai@gmail.com": {
+    "apps": [
+      "Shape Drawer"
+    ],
+    "robots": [
+      {
+        "ip": "192.168.1.19",
+        "model": "burger",
+        "name": "weee",
+        "type": "TurtleBot3"
+      }
+    ]
+  },
+  "qwe@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "name": "qwee",
+        "model": "burger",
+        "ip": "192.168.1.9"
+      }
+    ]
+  },
+  "akshaiythinkaran@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "description": "",
+        "ip": "192.168.1.32",
+        "location": "Lab",
+        "model": "burger",
+        "name": "jimmy",
+        "type": "TurtleBot3"
+      },
+      {
+        "type": "Manipulator",
+        "name": "qweee",
+        "model": "UR5",
+        "ip": "1233123",
+        "location": "",
+        "description": ""
+      }
+    ]
+  },
+  "jess@gmail.com": {
+    "apps": [
+      "draw_shapes"
+    ],
+    "robots": [
+      {
+        "description": "",
+        "ip": "1231233",
+        "location": "",
+        "model": "burger",
+        "name": "qwee",
+        "type": "TurtleBot3"
+      }
+    ]
+  },
+  "chatu@gmail.com": {
+    "apps": [],
+    "robots": [
+      {
+        "description": "",
+        "ip": "192.168.1.3",
+        "location": "lab",
+        "model": "burger",
+        "name": "pep",
+        "type": "TurtleBot3"
+      },
+      {
+        "description": "",
+        "ip": "12333",
+        "location": "",
+        "model": "PX4",
+        "name": "ferrr",
+        "type": "Drone"
+      },
+      {
+        "description": "",
+        "ip": "123123",
+        "location": "",
+        "model": "UR5",
+        "name": "adsdasd",
+        "type": "Manipulator"
+      }
+    ]
+  },
+  "null": {
+    "apps": [],
+    "robots": [
+      {
+        "type": "TurtleBot3",
+        "name": "fdg",
+        "model": "burger",
+        "ip": "1231312",
+        "location": "",
+        "description": ""
+      }
+    ]
+  }
+}

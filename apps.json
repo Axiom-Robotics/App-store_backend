@@ -1,0 +1,12 @@
+{
+  "draw_shapes": {
+    "description": "Lets the robot draw shapes like squares, triangles, and circles.",
+    "enabled": true,
+    "name": "Shape Drawer"
+  },
+  "voice_control": {
+    "description": "Lets you command your TurtleBot via microphone input.",
+    "enabled": false,
+    "name": "Voice Control"
+  }
+}

@@ -1,108 +1,240 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import json
 import os
 from datetime import datetime
-from flask import Flask, jsonify, request, send_from_directory  # Add send_from_directory
 
+# ============== FLASK APP SETUP ==============
 
-# Create Flask app (this is our web server)
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='')
+CORS(app)  # Allow requests from any origin
 
-# CORS allows your local laptop to talk to this server
-CORS(app)
-
-# File names where data is stored
+# Data file paths
 APPS_FILE = 'apps.json'
 USERS_FILE = 'users.json'
 
 # ============== HELPER FUNCTIONS ==============
 
-def load_json(filename, default=[]):
-    """
-    Load data from JSON file
-    Why: We need to read the apps/users data to send back to clients
-    """
+def load_json(filename, default=None):
+    """Load data from JSON file"""
+    if default is None:
+        default = {} if filename == USERS_FILE else []
+    
     if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
-    return default  # Return empty list if file doesn't exist
+        try:
+            with open(filename, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading {filename}: {e}")
+            return default
+    return default
 
 def save_json(filename, data):
-    """
-    Save data to JSON file
-    Why: When someone adds/updates an app, we need to save it permanently
-    """
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=2)
+    """Save data to JSON file"""
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving {filename}: {e}")
+        return False
 
-# ============== APP STORE API ENDPOINTS ==============
+# ============== FRONTEND ROUTES ==============
+
+@app.route('/')
+def serve_frontend():
+    """Serve main app store page"""
+    return send_from_directory('static', 'index.html')
+
+@app.route('/index_1.html')
+def serve_alternate_frontend():
+    """Serve alternate frontend"""
+    return send_from_directory('static', 'index_1.html')
+
+@app.route('/<path:path>')
+def serve_static_files(path):
+    """Serve static assets (CSS, JS, images, plugins)"""
+    try:
+        return send_from_directory('static', path)
+    except Exception as e:
+        return jsonify({"error": "File not found", "path": path}), 404
+
+# ============== APPS API ==============
 
 @app.route('/api/apps', methods=['GET'])
 def get_apps():
-    """
-    GET /api/apps - Returns all apps in the store
-    Why: When your app store UI opens, it calls this to show all available apps
-    Example response: {"success": true, "apps": [...], "count": 5}
-    """
+    """Get all apps"""
     apps = load_json(APPS_FILE, [])
     return jsonify({
-        "success": True, 
-        "apps": apps, 
+        "success": True,
+        "apps": apps,
         "count": len(apps)
     })
 
 @app.route('/api/apps/<app_id>', methods=['GET'])
 def get_app(app_id):
-    """
-    GET /api/apps/12345 - Returns one specific app
-    Why: When user clicks on an app, get detailed info about that app only
-    """
+    """Get single app by ID"""
     apps = load_json(APPS_FILE, [])
-    # Find the app with matching ID
     app = next((a for a in apps if a.get('id') == app_id), None)
     
     if app:
         return jsonify({"success": True, "app": app})
-    else:
-        return jsonify({"success": False, "error": "App not found"}), 404
+    return jsonify({"success": False, "error": "App not found"}), 404
 
 @app.route('/api/apps', methods=['POST'])
 def add_app():
-    """
-    POST /api/apps - Add a new app to the store
-    Why: When a developer publishes a new app, this saves it
-    """
-    apps = load_json(APPS_FILE, [])
-    new_app = request.json  # Get the app data sent by client
-    new_app['created_at'] = datetime.now().isoformat()  # Add timestamp
-    apps.append(new_app)
-    save_json(APPS_FILE, apps)
-    return jsonify({"success": True, "message": "App added", "app": new_app})
+    """Add new app"""
+    try:
+        apps = load_json(APPS_FILE, [])
+        new_app = request.get_json()
+        new_app['created_at'] = datetime.now().isoformat()
+        apps.append(new_app)
+        save_json(APPS_FILE, apps)
+        return jsonify({"success": True, "message": "App added", "app": new_app})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/apps/<app_id>', methods=['PUT'])
 def update_app(app_id):
-    """
-    PUT /api/apps/12345 - Update an existing app
-    Why: When developer updates their app description/version, this saves changes
-    """
-    apps = load_json(APPS_FILE, [])
-    for i, app in enumerate(apps):
-        if app.get('id') == app_id:
-            # Merge old data with new data
-            apps[i] = {**app, **request.json}
-            apps[i]['updated_at'] = datetime.now().isoformat()
-            save_json(APPS_FILE, apps)
-            return jsonify({"success": True, "app": apps[i]})
-    
-    return jsonify({"success": False, "error": "App not found"}), 404
+    """Update existing app"""
+    try:
+        apps = load_json(APPS_FILE, [])
+        for i, app in enumerate(apps):
+            if app.get('id') == app_id:
+                apps[i] = {**app, **request.get_json()}
+                apps[i]['updated_at'] = datetime.now().isoformat()
+                save_json(APPS_FILE, apps)
+                return jsonify({"success": True, "app": apps[i]})
+        return jsonify({"success": False, "error": "App not found"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route('/api/apps/<app_id>', methods=['DELETE'])
+def delete_app(app_id):
+    """Delete app"""
+    try:
+        apps = load_json(APPS_FILE, [])
+        apps = [a for a in apps if a.get('id') != app_id]
+        save_json(APPS_FILE, apps)
+        return jsonify({"success": True, "message": "App deleted"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# ============== USERS API ==============
+
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    """Get all users"""
+    users = load_json(USERS_FILE, {})
+    return jsonify({"success": True, "users": users})
+
+@app.route('/api/users/<user_id>', methods=['GET'])
+def get_user(user_id):
+    """Get single user by ID"""
+    users = load_json(USERS_FILE, {})
+    user = users.get(user_id)
+    
+    if user:
+        return jsonify({"success": True, "user": user})
+    return jsonify({"success": False, "error": "User not found"}), 404
+
+@app.route('/api/users', methods=['POST'])
+def add_user():
+    """Add or update user"""
+    try:
+        users = load_json(USERS_FILE, {})
+        new_user = request.get_json()
+        user_id = new_user.get('id') or new_user.get('email')
+        
+        if not user_id:
+            return jsonify({"success": False, "error": "User ID or email required"}), 400
+        
+        new_user['created_at'] = datetime.now().isoformat()
+        users[user_id] = new_user
+        save_json(USERS_FILE, users)
+        return jsonify({"success": True, "user": new_user})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# ============== USER DATA ENDPOINTS (COMPATIBILITY) ==============
+
+@app.route('/user-data', methods=['POST', 'OPTIONS'])
+def user_data():
+    """Get user data by email (legacy endpoint)"""
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({"apps": [], "robots": []}), 200
+        
+        users = load_json(USERS_FILE, {})
+        user = users.get(email, {"apps": [], "robots": []})
+        
+        return jsonify(user), 200
+    except Exception as e:
+        print(f"User data error: {e}")
+        return jsonify({"apps": [], "robots": []}), 200
+
+@app.route('/update-user', methods=['POST', 'OPTIONS'])
+def update_user_data():
+    """Update user data (legacy endpoint)"""
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({"status": "error", "message": "Email required"}), 400
+        
+        users = load_json(USERS_FILE, {})
+        users[email] = {
+            "apps": data.get('apps', []),
+            "robots": data.get('robots', [])
+        }
+        save_json(USERS_FILE, users)
+        
+        return jsonify({"status": "ok"}), 200
+    except Exception as e:
+        print(f"Update user error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/update-app-enabled', methods=['POST', 'OPTIONS'])
+def update_app_enabled():
+    """Update app enabled status"""
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    
+    try:
+        data = request.get_json()
+        app_id = data.get('app_id')
+        enabled = data.get('enabled')
+        
+        if app_id is None or enabled is None:
+            return jsonify({"status": "error", "message": "Missing app_id or enabled"}), 400
+        
+        apps = load_json(APPS_FILE, [])
+        for app in apps:
+            if app.get('id') == app_id or app.get('name') == app_id:
+                app['enabled'] = bool(enabled)
+                save_json(APPS_FILE, apps)
+                return jsonify({"status": "ok", "app": app}), 200
+        
+        return jsonify({"status": "error", "message": "App not found"}), 404
+    except Exception as e:
+        print(f"Update app enabled error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # ============== AUTHENTICATION ==============
 
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
-    """Login endpoint"""
+    """User login"""
     if request.method == 'OPTIONS':
         return jsonify({"success": True}), 200
     
@@ -114,19 +246,17 @@ def login():
         if not email:
             return jsonify({"success": False, "error": "Email required"}), 400
         
-        # Load users
-        users_data = load_json(USERS_FILE, {})
+        users = load_json(USERS_FILE, {})
         
         # Check if user exists
-        if email in users_data:
-            user = users_data[email]
+        if email in users:
+            user = users[email]
             
-            # If user has password, check it
+            # Verify password if set
             if 'password' in user and user['password']:
                 if user['password'] != password:
                     return jsonify({"success": False, "error": "Invalid password"}), 401
             
-            # Login successful
             return jsonify({
                 "success": True,
                 "message": "Login successful",
@@ -138,15 +268,13 @@ def login():
             }), 200
         else:
             # Create new user
-            users_data[email] = {
+            users[email] = {
                 "apps": [],
                 "robots": [],
+                "password": password if password else None,
                 "created_at": datetime.now().isoformat()
             }
-            if password:
-                users_data[email]['password'] = password
-            
-            save_json(USERS_FILE, users_data)
+            save_json(USERS_FILE, users)
             
             return jsonify({
                 "success": True,
@@ -157,14 +285,13 @@ def login():
                     "robots": []
                 }
             }), 200
-            
     except Exception as e:
         print(f"Login error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/register', methods=['POST', 'OPTIONS'])
 def register():
-    """Register endpoint"""
+    """User registration"""
     if request.method == 'OPTIONS':
         return jsonify({"success": True}), 200
     
@@ -176,122 +303,67 @@ def register():
         if not email:
             return jsonify({"success": False, "error": "Email required"}), 400
         
-        users_data = load_json(USERS_FILE, {})
+        users = load_json(USERS_FILE, {})
         
-        if email in users_data:
+        if email in users:
             return jsonify({"success": False, "error": "User already exists"}), 409
         
-        users_data[email] = {
+        users[email] = {
             "apps": [],
             "robots": [],
             "password": password if password else None,
             "created_at": datetime.now().isoformat()
         }
-        
-        save_json(USERS_FILE, users_data)
+        save_json(USERS_FILE, users)
         
         return jsonify({
             "success": True,
-            "message": "User registered",
+            "message": "User registered successfully",
             "user": {
                 "email": email,
                 "apps": [],
                 "robots": []
             }
         }), 200
-        
     except Exception as e:
         print(f"Register error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
-
-
-@app.route('/api/apps/<app_id>', methods=['DELETE'])
-def delete_app(app_id):
-    """
-    DELETE /api/apps/12345 - Remove an app from store
-    Why: If an app is deprecated or removed, this deletes it
-    """
-    apps = load_json(APPS_FILE, [])
-    apps = [a for a in apps if a.get('id') != app_id]  # Keep all except this one
-    save_json(APPS_FILE, apps)
-    return jsonify({"success": True, "message": "App deleted"})
-
-# ============== USER MANAGEMENT ==============
-
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    """
-    GET /api/users - Returns all users
-    Why: For displaying user list or checking user permissions
-    """
-    users = load_json(USERS_FILE, [])
-    return jsonify({"success": True, "users": users})
-
-@app.route('/api/users/<user_id>', methods=['GET'])
-def get_user(user_id):
-    """
-    GET /api/users/user123 - Get specific user info
-    Why: For user profile pages or authentication
-    """
-    users = load_json(USERS_FILE, [])
-    user = next((u for u in users if u.get('id') == user_id), None)
-    
-    if user:
-        return jsonify({"success": True, "user": user})
-    return jsonify({"success": False, "error": "User not found"}), 404
-
-@app.route('/api/users', methods=['POST'])
-def add_user():
-    """
-    POST /api/users - Register a new user
-    Why: When someone creates an account
-    """
-    users = load_json(USERS_FILE, [])
-    new_user = request.json
-    new_user['created_at'] = datetime.now().isoformat()
-    users.append(new_user)
-    save_json(USERS_FILE, users)
-    return jsonify({"success": True, "user": new_user})
 
 # ============== HEALTH CHECK ==============
 
 @app.route('/health', methods=['GET'])
 def health():
-    """
-    GET /health - Check if server is running properly
-    Why: Railway uses this to monitor if your app is alive
-    """
-    apps_count = len(load_json(APPS_FILE, []))
-    users_count = len(load_json(USERS_FILE, []))
-    return jsonify({
-        "status": "healthy",
-        "apps_count": apps_count,
-        "users_count": users_count
-    })
-
-# ============== SERVE FRONTEND ==============
-
-@app.route('/')
-def serve_frontend():
-    """Serve the main app store page"""
-    return send_from_directory('static', 'index.html')
-
-@app.route('/<path:path>')
-def serve_static_files(path):
-    """Serve static assets (CSS, JS, images)"""
-    return send_from_directory('static', path)
-
-
-
-
-
-
+    """Health check endpoint for monitoring"""
+    try:
+        apps = load_json(APPS_FILE, [])
+        users = load_json(USERS_FILE, {})
+        
+        return jsonify({
+            "status": "healthy",
+            "apps_count": len(apps),
+            "users_count": len(users),
+            "version": "cloud-full",
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e)
+        }), 500
 
 # ============== START SERVER ==============
 
 if __name__ == '__main__':
-    # Railway sets PORT environment variable automatically
     port = int(os.environ.get('PORT', 5000))
-    # Run server accessible from internet (0.0.0.0)
+    
+    print("=" * 70)
+    print("🚀 Axiom OS App Store - Cloud Backend")
+    print("=" * 70)
+    print(f"📡 Port: {port}")
+    print(f"📂 Apps file: {APPS_FILE}")
+    print(f"👥 Users file: {USERS_FILE}")
+    print(f"🌐 Static folder: {app.static_folder}")
+    print("=" * 70)
+    
     app.run(host='0.0.0.0', port=port, debug=False)
 

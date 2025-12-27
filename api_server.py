@@ -97,6 +97,114 @@ def update_app(app_id):
     
     return jsonify({"success": False, "error": "App not found"}), 404
 
+
+# ============== AUTHENTICATION ==============
+
+@app.route('/api/login', methods=['POST', 'OPTIONS'])
+def login():
+    """Login endpoint"""
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email') or data.get('username')
+        password = data.get('password', '')
+        
+        if not email:
+            return jsonify({"success": False, "error": "Email required"}), 400
+        
+        # Load users
+        users_data = load_json(USERS_FILE, {})
+        
+        # Check if user exists
+        if email in users_data:
+            user = users_data[email]
+            
+            # If user has password, check it
+            if 'password' in user and user['password']:
+                if user['password'] != password:
+                    return jsonify({"success": False, "error": "Invalid password"}), 401
+            
+            # Login successful
+            return jsonify({
+                "success": True,
+                "message": "Login successful",
+                "user": {
+                    "email": email,
+                    "apps": user.get('apps', []),
+                    "robots": user.get('robots', [])
+                }
+            }), 200
+        else:
+            # Create new user
+            users_data[email] = {
+                "apps": [],
+                "robots": [],
+                "created_at": datetime.now().isoformat()
+            }
+            if password:
+                users_data[email]['password'] = password
+            
+            save_json(USERS_FILE, users_data)
+            
+            return jsonify({
+                "success": True,
+                "message": "New user created",
+                "user": {
+                    "email": email,
+                    "apps": [],
+                    "robots": []
+                }
+            }), 200
+            
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/register', methods=['POST', 'OPTIONS'])
+def register():
+    """Register endpoint"""
+    if request.method == 'OPTIONS':
+        return jsonify({"success": True}), 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email') or data.get('username')
+        password = data.get('password', '')
+        
+        if not email:
+            return jsonify({"success": False, "error": "Email required"}), 400
+        
+        users_data = load_json(USERS_FILE, {})
+        
+        if email in users_data:
+            return jsonify({"success": False, "error": "User already exists"}), 409
+        
+        users_data[email] = {
+            "apps": [],
+            "robots": [],
+            "password": password if password else None,
+            "created_at": datetime.now().isoformat()
+        }
+        
+        save_json(USERS_FILE, users_data)
+        
+        return jsonify({
+            "success": True,
+            "message": "User registered",
+            "user": {
+                "email": email,
+                "apps": [],
+                "robots": []
+            }
+        }), 200
+        
+    except Exception as e:
+        print(f"Register error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @app.route('/api/apps/<app_id>', methods=['DELETE'])
 def delete_app(app_id):
     """

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Connect to Bot</title>
+</head>
+<body>
+  <h2>Connect to Raspberry Pi</h2>
+  <input type="text" id="ipInput" placeholder="Enter Pi IP (e.g. 192.168.1.9)" />
+  <button onclick="connectToBot()">Connect</button>
+
+  <script>
+    function connectToBot() {
+      const ip = document.getElementById("ipInput").value;
+
+      fetch("/connect-bot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Done!");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Something went wrong.");
+      });
+    }
+  </script>
+</body>
+</html>
+

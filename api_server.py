@@ -3,6 +3,8 @@ from flask_cors import CORS
 import json
 import os
 from datetime import datetime
+from flask import Flask, jsonify, request, send_from_directory  # Add send_from_directory
+
 
 # Create Flask app (this is our web server)
 app = Flask(__name__)
@@ -158,6 +160,24 @@ def health():
         "apps_count": apps_count,
         "users_count": users_count
     })
+
+# ============== SERVE FRONTEND ==============
+
+@app.route('/')
+def serve_frontend():
+    """Serve the main app store page"""
+    return send_from_directory('static', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static_files(path):
+    """Serve static assets (CSS, JS, images)"""
+    return send_from_directory('static', path)
+
+
+
+
+
+
 
 # ============== START SERVER ==============
 

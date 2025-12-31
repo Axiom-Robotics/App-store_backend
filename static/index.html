@@ -3145,7 +3145,7 @@
     function launchInGazebo() {
       if (currentRobotIndex >= 0) {
         const robot = userData.robots[currentRobotIndex];
-        fetch("/api/launch_gazebo", {
+        fetch("http://localhost:5000/launch-gazebo", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 

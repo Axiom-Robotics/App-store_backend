@@ -3149,8 +3149,9 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
-              type: robot.type,
-              model: robot.model
+          robot_type: robot.type,
+          robot_model: robot.model
+          robot_id: currentRobotIndex
           })
         })
         .then(res => res.json())

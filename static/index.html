@@ -3150,14 +3150,15 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
           robot_type: robot.type,
-          robot_model: robot.model
+          robot_model: robot.model,
+          robot_name: robot.name,
           robot_id: currentRobotIndex
           })
         })
         .then(res => res.json())
         .then(data => {
-          if (data.status) {
-            alert(`✅ ${data.status}`);
+          if (data.success) {
+            alert(`✅ ${data.message}`);
           } else {
             alert(`❌ Error: ${data.error || "Failed to launch Gazebo"}`);
           }
